@@ -1,16 +1,14 @@
 package Server;
 						
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
+
+import Controllers.Controller;
 
 public class Server {
 	private static final int SERVER_PORT = 5050; 
@@ -18,8 +16,21 @@ public class Server {
 	private ServerSocket server;
 	public Server() {}
 	
+	private static List<Controller> controllers;
+	
 	public static void main(String[] args) {
 		Server server = new Server();
+		
+		controllers = new ArrayList<>();
+		
+		Controller first = new Controller(1,"first",1,false);
+		Controller second = new Controller(2,"second",2,true);
+		Controller third = new Controller(3,"third",3,false);
+		
+		controllers.add(first);
+		controllers.add(second);
+		controllers.add(third);
+		
 		server.runServer();
 	
 	}
@@ -29,7 +40,7 @@ public class Server {
 			server = new ServerSocket(SERVER_PORT);
 			System.out.println("Server is running");
 			while(true) {
-				new Controller(server.accept()).start();
+				new Client(server.accept()).start();
 				System.out.println("hello client");
 			}
 		}
@@ -38,13 +49,13 @@ public class Server {
 		}
 	}
 	
-	private class Controller extends Thread{
+	private class Client extends Thread{
 		private Socket socket;
 		private ObjectInputStream input;
 		private ObjectOutputStream output;
 		private String in;
 		
-		public Controller(Socket socket){
+		public Client(Socket socket){
 			this.socket = socket;
 			System.out.println("New clien at"+ socket.getRemoteSocketAddress());
 		}
@@ -56,7 +67,15 @@ public class Server {
 				output.writeObject("Hello, Welcome to RPI");
 				output.flush();
 				while(!(in = (String) input.readObject()).equals("close")){
+					if((in = (String) input.readObject()).equals("getPinsStatus")) {
+						output.writeObject(controllers.size());
+						for(int i = 0; i<controllers.size();i++) {
+							output.writeObject(controllers.get(i).toString());
+						}
 						
+					}
+					System.out.println(input.readObject().toString());
+							
 				}
 			}catch(IOException e) {
 				e.printStackTrace();
@@ -79,7 +98,7 @@ public class Server {
 	            try {
 	                output.close();
 	                input.close();
-	                socket.close();
+	                socket.close();	
 	            } catch (IOException ex) {
 	                ex.printStackTrace();
 	            }
