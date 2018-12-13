@@ -9,7 +9,7 @@ import java.net.Socket;
 
 public class HttpServer {
 	public static void main(String[] args) throws Throwable {
-        ServerSocket ss = new ServerSocket(505	0);
+        ServerSocket ss = new ServerSocket(5050);
         while (true) {
             Socket s = ss.accept();
             System.err.println("Client accepted");
@@ -33,7 +33,7 @@ public class HttpServer {
         public void run() {
             try {
                 readInputHeaders();
-                if(request = )
+               // if(request = )
                 //writeResponse("<html><body><h1>Hello from Habrahabr</h1></body></html>");
             } catch (Throwable t) {
                 /*do nothing*/

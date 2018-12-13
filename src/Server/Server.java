@@ -53,7 +53,6 @@ public class Server {
 		private Socket socket;
 		private ObjectInputStream input;
 		private ObjectOutputStream output;
-		private String in;
 		
 		public Client(Socket socket){
 			this.socket = socket;
@@ -66,8 +65,8 @@ public class Server {
 				getStreams();
 				output.writeObject("Hello, Welcome to RPI");
 				output.flush();
-				while(!(in = (String) input.readObject()).equals("close")){
-					if((in = (String) input.readObject()).equals("getPinsStatus")) {
+				while(!(input.readObject()).equals("close")){
+					if((input.readObject()).equals("getPinsStatus")) {
 						output.writeObject(controllers.size());
 						for(int i = 0; i<controllers.size();i++) {
 							output.writeObject(controllers.get(i).toString());
@@ -75,7 +74,6 @@ public class Server {
 						
 					}
 					System.out.println(input.readObject().toString());
-							
 				}
 			}catch(IOException e) {
 				e.printStackTrace();
