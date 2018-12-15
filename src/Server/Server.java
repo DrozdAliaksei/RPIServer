@@ -66,12 +66,21 @@ public class Server {
 				output.writeObject("Hello, Welcome to RPI");
 				output.flush();
 				while(!(input.readObject()).equals("close")){
+					String msg = (String) input.readObject();
+					while(msg!=null) {
+						System.out.println(msg);
+					}
 					if((input.readObject()).equals("getPinsStatus")) {
+						System.out.println("getPinsStatus");
 						output.writeObject(controllers.size());
+						output.flush();
 						for(int i = 0; i<controllers.size();i++) {
 							output.writeObject(controllers.get(i).toString());
+							output.flush();
 						}
 						
+					}else {
+						System.out.println("Trouble in getPinsStatus");
 					}
 					System.out.println(input.readObject().toString());
 				}
